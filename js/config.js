@@ -11,7 +11,7 @@ const CONFIG = {
    * After deploying your Apps Script, paste the URL here.
    * e.g. "https://script.google.com/macros/s/AKfyc.../exec"
    */
-  GAS_URL: "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec",
+  GAS_URL: "https://script.google.com/macros/s/AKfycbwBpECeN404PfPe5LKBWN_-WGiQgba_OQnDsgbeCOgvKktfiXTKpaNIVcrcmFey20qcyg/exec",
 
   /**
    * Admin password hash (SHA-256 of the actual password).
@@ -22,7 +22,7 @@ const CONFIG = {
    * NOTE: This is client-side security only — suitable for internal use.
    * For higher security, add server-side password check in Apps Script.
    */
-  ADMIN_HASH: "7b1f0b0a1ad5b77e28c8e5ad4e3b60a7b0c0d7e6f1a2b3c4d5e6f7a8b9c0d1e2",
+  ADMIN_HASH: "1562c9c52639b3dc8d266842635c0e515b03cbec525f597e2e6a31f04efa7a9e",
 
   /**
    * Open-Meteo API for weather data (free, no API key required).
