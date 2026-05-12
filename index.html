@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NATRAX Track Thermal Monitor</title>
+  <meta name="description" content="Surface temperature monitoring for T3 & T13 tracks at NATRAX, Pithampur" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+  <!-- Tesseract.js OCR CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
+</head>
+<body>
+  <!-- ─── HEADER ─────────────────────────────────── -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">⬡</span>
+        <div>
+          <div class="brand-title">NATRAX</div>
+          <div class="brand-sub">Track Thermal Monitor</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle light/dark mode">
+          <span class="theme-icon">◐</span>
+        </button>
+        <button class="admin-btn" id="adminBtn">Admin</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── NAV TABS ───────────────────────────────── -->
+  <nav class="tab-nav" role="tablist">
+    <button class="tab-btn active" data-tab="dashboard" role="tab" aria-selected="true">Dashboard</button>
+    <button class="tab-btn" data-tab="table" role="tab" aria-selected="false">Data Table</button>
+    <button class="tab-btn admin-only hidden" data-tab="upload" role="tab" aria-selected="false">Upload</button>
+  </nav>
+
+  <!-- ─── MAIN CONTENT ───────────────────────────── -->
+  <main class="app-main">
+
+    <!-- ══ DASHBOARD TAB ══════════════════════════ -->
+    <section id="tab-dashboard" class="tab-panel active">
+      <!-- Summary Cards -->
+      <div class="summary-grid">
+        <div class="stat-card" data-track="all">
+          <div class="stat-label">Latest Reading</div>
+          <div class="stat-value" id="statLatest">—</div>
+          <div class="stat-meta" id="statLatestMeta">No data yet</div>
+        </div>
+        <div class="stat-card accent-t3">
+          <div class="stat-label">T3 Max Today</div>
+          <div class="stat-value" id="statT3Max">—</div>
+          <div class="stat-meta">°C surface</div>
+        </div>
+        <div class="stat-card accent-t13">
+          <div class="stat-label">T13 Max Today</div>
+          <div class="stat-value" id="statT13Max">—</div>
+          <div class="stat-meta">°C surface</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Ambient Now</div>
+          <div class="stat-value" id="statAmbient">—</div>
+          <div class="stat-meta">°C at Pithampur</div>
+        </div>
+      </div>
+
+      <!-- Chart Filters -->
+      <div class="chart-controls">
+        <div class="filter-group">
+          <label class="filter-label">Track</label>
+          <div class="pill-group" role="group" aria-label="Track filter">
+            <button class="pill active" data-filter-track="all">All</button>
+            <button class="pill" data-filter-track="T3">T3</button>
+            <button class="pill" data-filter-track="T13">T13</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Period</label>
+          <div class="pill-group" role="group" aria-label="Period filter">
+            <button class="pill active" data-filter-period="7">7d</button>
+            <button class="pill" data-filter-period="30">30d</button>
+            <button class="pill" data-filter-period="90">90d</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Surface Temp Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">Surface Temperature</span>
+          <span class="chart-unit">°C</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartSurface" role="img" aria-label="Surface temperature over time"></canvas>
+        </div>
+      </div>
+
+      <!-- Ambient vs Surface Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">Ambient vs Surface</span>
+          <span class="chart-unit">°C comparison</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartComparison" role="img" aria-label="Ambient vs surface temperature comparison"></canvas>
+        </div>
+      </div>
+
+      <!-- Humidity & Wind -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">Humidity & Wind Speed</span>
+          <span class="chart-unit">% · km/h</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartWeather" role="img" aria-label="Humidity and wind speed chart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ DATA TABLE TAB ═══════════════════════ -->
+    <section id="tab-table" class="tab-panel" hidden>
+      <div class="table-controls">
+        <div class="date-range-group">
+          <label class="filter-label" for="filterFrom">From</label>
+          <input type="date" id="filterFrom" class="date-input" />
+          <label class="filter-label" for="filterTo">To</label>
+          <input type="date" id="filterTo" class="date-input" />
+        </div>
+        <div class="table-actions">
+          <div class="pill-group">
+            <button class="pill active" data-table-track="all">All</button>
+            <button class="pill" data-table-track="T3">T3</button>
+            <button class="pill" data-table-track="T13">T13</button>
+          </div>
+          <button class="action-btn" id="csvBtn">↓ CSV</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table" role="grid">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Time</th>
+              <th scope="col">Track</th>
+              <th scope="col">Surface °C</th>
+              <th scope="col">Ambient °C</th>
+              <th scope="col">Wind km/h</th>
+              <th scope="col">Humidity %</th>
+              <th scope="col">Source</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr class="table-empty">
+              <td colspan="8">Loading data…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <span id="tableCount">0 records</span>
+      </div>
+    </section>
+
+    <!-- ══ UPLOAD TAB (Admin only) ══════════════ -->
+    <section id="tab-upload" class="tab-panel" hidden>
+      <div class="upload-container">
+
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="Upload image for OCR extraction">
+          <div class="drop-icon">📷</div>
+          <div class="drop-title">Upload Track Sheet</div>
+          <div class="drop-sub">Photo or screenshot of the temperature sheet</div>
+          <input type="file" id="fileInput" accept="image/*" class="sr-only" aria-label="Select image file" />
+          <button class="upload-cta" id="selectFileBtn">Select Image</button>
+        </div>
+
+        <!-- OCR Status -->
+        <div class="ocr-status hidden" id="ocrStatus">
+          <div class="ocr-progress">
+            <div class="ocr-bar" id="ocrBar"></div>
+          </div>
+          <div class="ocr-msg" id="ocrMsg">Processing…</div>
+        </div>
+
+        <!-- Preview -->
+        <div class="preview-wrap hidden" id="previewWrap">
+          <img id="previewImg" class="preview-img" alt="Uploaded sheet preview" />
+        </div>
+
+        <!-- Extracted / Manual Form -->
+        <div class="entry-form" id="entryForm">
+          <div class="form-section-title">Extracted Data — Review & Edit</div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="fDate">Date</label>
+              <input type="date" id="fDate" class="form-input" />
+            </div>
+            <div class="form-field">
+              <label for="fTrack">Track</label>
+              <select id="fTrack" class="form-input">
+                <option value="">Select…</option>
+                <option value="T3">T3</option>
+                <option value="T13">T13</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Readings sub-form (repeatable) -->
+          <div class="readings-section">
+            <div class="readings-title">Readings</div>
+            <div class="reading-row" data-reading="morning">
+              <span class="reading-label">Morning</span>
+              <input type="time" class="form-input reading-time" id="rMorningTime" placeholder="HH:MM" />
+              <input type="number" class="form-input reading-temp" id="rMorningTemp" placeholder="°C" step="0.1" />
+            </div>
+            <div class="reading-row" data-reading="afternoon">
+              <span class="reading-label">Afternoon</span>
+              <input type="time" class="form-input reading-time" id="rAfternoonTime" placeholder="HH:MM" />
+              <input type="number" class="form-input reading-temp" id="rAfternoonTemp" placeholder="°C" step="0.1" />
+            </div>
+            <div class="reading-row" data-reading="evening">
+              <span class="reading-label">Evening</span>
+              <input type="time" class="form-input reading-time" id="rEveningTime" placeholder="HH:MM" />
+              <input type="number" class="form-input reading-temp" id="rEveningTemp" placeholder="°C" step="0.1" />
+            </div>
+          </div>
+
+          <!-- Weather fetch status -->
+          <div class="weather-fetch-row" id="weatherFetchRow">
+            <span class="weather-fetch-icon">🌡</span>
+            <span class="weather-fetch-label" id="weatherFetchLabel">Weather data will be fetched automatically on save</span>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-secondary" id="clearFormBtn">Clear</button>
+            <button class="btn-primary" id="saveBtn">Save to Sheet</button>
+          </div>
+
+          <div class="save-status hidden" id="saveStatus"></div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── ADMIN LOGIN MODAL ──────────────────────── -->
+  <div class="modal-overlay hidden" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="modal-box">
+      <div class="modal-title" id="loginTitle">Admin Access</div>
+      <div class="modal-sub">Enter password to unlock upload</div>
+      <input type="password" id="adminPassword" class="form-input modal-input" placeholder="Password" autocomplete="current-password" />
+      <div class="modal-error hidden" id="loginError">Incorrect password</div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancelLoginBtn">Cancel</button>
+        <button class="btn-primary" id="confirmLoginBtn">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TOAST ──────────────────────────────────── -->
+  <div class="toast hidden" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ocr.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/upload.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
