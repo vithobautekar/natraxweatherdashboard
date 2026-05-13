@@ -451,7 +451,58 @@ select.form-input { cursor: pointer; }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* ─── RESPONSIVE ─────────────────────────────────────── */
+/* ─── DYNAMIC ROWS TABLE ─────────────────────────────── */
+.dynamic-rows { margin-bottom: 12px; }
+
+.no-rows-hint {
+  text-align: center; padding: 24px;
+  font-size: 13px; font-family: var(--font-mono);
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border);
+}
+
+.dyn-table-header {
+  display: grid; grid-template-columns: 1fr 70px 90px 90px 32px;
+  gap: 6px; padding: 0 4px 6px;
+  font-size: 10px; font-weight: 500; font-family: var(--font-mono);
+  color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+.dyn-row {
+  display: grid; grid-template-columns: 1fr 70px 90px 90px 32px;
+  gap: 6px; margin-bottom: 6px; align-items: center;
+}
+
+.dyn-row .form-input { padding: 8px 8px; font-size: 13px; }
+
+.delete-row-btn {
+  width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--bg-input); color: var(--text-muted);
+  font-size: 11px; cursor: pointer; transition: all var(--transition);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.delete-row-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(212,56,13,0.08); }
+
+.add-row-btn {
+  width: 100%; padding: 8px; margin-bottom: 14px;
+  border: 1px dashed var(--border); border-radius: var(--radius-sm);
+  background: transparent; color: var(--text-muted);
+  font-family: var(--font-mono); font-size: 12px; cursor: pointer;
+  transition: all var(--transition);
+}
+.add-row-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+@media (max-width: 480px) {
+  .dyn-table-header,
+  .dyn-row {
+    grid-template-columns: 1fr 60px 80px 80px 28px;
+    gap: 4px;
+  }
+  .dyn-row .form-input { padding: 7px 6px; font-size: 12px; }
+}
 @media (min-width: 600px) {
   .summary-grid { grid-template-columns: repeat(4, 1fr); }
   .chart-wrap   { height: 240px; }
