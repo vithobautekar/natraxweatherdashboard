@@ -451,6 +451,63 @@ select.form-input { cursor: pointer; }
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
+/* ─── METHOD TABS (Paste / Manual) ──────────────────── */
+.method-tabs {
+  display: flex; gap: 4px; margin-bottom: 14px;
+}
+.method-tab {
+  flex: 1; padding: 9px 12px;
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg-input); color: var(--text-muted);
+  cursor: pointer; transition: all var(--transition);
+}
+.method-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.method-tab:not(.active):hover { border-color: var(--accent); color: var(--accent); }
+
+.method-panel { margin-bottom: 14px; }
+
+/* ─── PASTE INSTRUCTIONS ─────────────────────────────── */
+.paste-instructions {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 10px;
+}
+.paste-inst-title {
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  color: var(--text-secondary); margin-bottom: 6px; letter-spacing: 0.04em;
+}
+.paste-inst-body {
+  font-size: 12px; font-family: var(--font-mono); color: var(--text-muted);
+  line-height: 1.6;
+}
+.paste-inst-body code {
+  display: block; margin-top: 4px;
+  background: var(--bg-input); border-radius: 4px;
+  padding: 3px 8px; font-size: 12px; color: var(--text-secondary);
+  letter-spacing: 0.03em;
+}
+
+/* ─── PASTE TEXTAREA ─────────────────────────────────── */
+.paste-textarea {
+  width: 100%; min-height: 160px; resize: vertical;
+  font-family: var(--font-mono); font-size: 13px; line-height: 1.7;
+  background: var(--bg-input); border: 1px solid var(--border);
+  color: var(--text-primary); border-radius: var(--radius-sm);
+  padding: 12px; outline: none;
+  transition: border-color var(--transition);
+  display: block;
+}
+.paste-textarea:focus { border-color: var(--accent); }
+
+.parse-btn {
+  width: 100%; margin-top: 8px; padding: 10px;
+  background: var(--bg-card); border: 1px solid var(--accent);
+  color: var(--accent); border-radius: var(--radius-sm);
+  font-family: var(--font-display); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all var(--transition);
+}
+.parse-btn:hover { background: var(--accent); color: #fff; }
+
 /* ─── DYNAMIC ROWS TABLE ─────────────────────────────── */
 .dynamic-rows { margin-bottom: 12px; }
 
