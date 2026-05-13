@@ -199,40 +199,12 @@
         <div class="entry-form" id="entryForm">
           <div class="form-section-title">Extracted Data — Review & Edit</div>
 
-          <div class="form-row">
-            <div class="form-field">
-              <label for="fDate">Date</label>
-              <input type="date" id="fDate" class="form-input" />
-            </div>
-            <div class="form-field">
-              <label for="fTrack">Track</label>
-              <select id="fTrack" class="form-input">
-                <option value="">Select…</option>
-                <option value="T3">T3</option>
-                <option value="T13">T13</option>
-              </select>
-            </div>
+          <!-- Dynamic rows table (one row per reading) -->
+          <div id="dynamicRowsContainer" class="dynamic-rows">
+            <div class="no-rows-hint">No readings yet — upload an image or click "+ Add Row"</div>
           </div>
 
-          <!-- Readings sub-form (repeatable) -->
-          <div class="readings-section">
-            <div class="readings-title">Readings</div>
-            <div class="reading-row" data-reading="morning">
-              <span class="reading-label">Morning</span>
-              <input type="time" class="form-input reading-time" id="rMorningTime" placeholder="HH:MM" />
-              <input type="number" class="form-input reading-temp" id="rMorningTemp" placeholder="°C" step="0.1" />
-            </div>
-            <div class="reading-row" data-reading="afternoon">
-              <span class="reading-label">Afternoon</span>
-              <input type="time" class="form-input reading-time" id="rAfternoonTime" placeholder="HH:MM" />
-              <input type="number" class="form-input reading-temp" id="rAfternoonTemp" placeholder="°C" step="0.1" />
-            </div>
-            <div class="reading-row" data-reading="evening">
-              <span class="reading-label">Evening</span>
-              <input type="time" class="form-input reading-time" id="rEveningTime" placeholder="HH:MM" />
-              <input type="number" class="form-input reading-temp" id="rEveningTemp" placeholder="°C" step="0.1" />
-            </div>
-          </div>
+          <button class="add-row-btn" id="addRowBtn">+ Add Row</button>
 
           <!-- Weather fetch status -->
           <div class="weather-fetch-row" id="weatherFetchRow">
