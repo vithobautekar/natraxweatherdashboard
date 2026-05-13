@@ -11,8 +11,6 @@
   <link rel="stylesheet" href="css/style.css" />
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
-  <!-- Tesseract.js OCR CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
 </head>
 <body>
   <!-- ─── HEADER ─────────────────────────────────── -->
@@ -173,47 +171,58 @@
     <section id="tab-upload" class="tab-panel" hidden>
       <div class="upload-container">
 
-        <!-- Drop Zone -->
-        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="Upload image for OCR extraction">
-          <div class="drop-icon">📷</div>
-          <div class="drop-title">Upload Track Sheet</div>
-          <div class="drop-sub">Photo or screenshot of the temperature sheet</div>
-          <input type="file" id="fileInput" accept="image/*" class="sr-only" aria-label="Select image file" />
-          <button class="upload-cta" id="selectFileBtn">Select Image</button>
+        <!-- ── Method Tabs ── -->
+        <div class="method-tabs">
+          <button class="method-tab active" data-method="paste">Paste Text</button>
+          <button class="method-tab" data-method="manual">Manual Entry</button>
         </div>
 
-        <!-- OCR Status -->
-        <div class="ocr-status hidden" id="ocrStatus">
-          <div class="ocr-progress">
-            <div class="ocr-bar" id="ocrBar"></div>
+        <!-- ── PASTE METHOD ── -->
+        <div class="method-panel active" id="methodPaste">
+          <div class="paste-instructions">
+            <div class="paste-inst-title">How to paste</div>
+            <div class="paste-inst-body">Copy rows from Excel or type them below. One reading per line. Accepted formats:
+              <code>17/04/26  T3   12:45  62.8</code>
+              <code>17-04-26  T13  12:52  64.3</code>
+              Columns can be separated by tabs, commas, or spaces. Date, Track, Time and Temp in any order as long as they are consistent per line.
+            </div>
           </div>
-          <div class="ocr-msg" id="ocrMsg">Processing…</div>
+          <textarea
+            id="pasteInput"
+            class="paste-textarea"
+            placeholder="Paste or type data here…&#10;&#10;Example:&#10;17/04/26  T3   12:45  62.8&#10;17/04/26  T3   12:46  63.9&#10;17/04/26  T13  12:52  64.3"
+            spellcheck="false"
+            autocorrect="off"
+            autocapitalize="off"
+          ></textarea>
+          <button class="parse-btn" id="parseTextBtn">Parse →</button>
         </div>
 
-        <!-- Preview -->
-        <div class="preview-wrap hidden" id="previewWrap">
-          <img id="previewImg" class="preview-img" alt="Uploaded sheet preview" />
+        <!-- ── MANUAL METHOD ── -->
+        <div class="method-panel hidden" id="methodManual">
+          <div class="paste-instructions">
+            <div class="paste-inst-title">Manual entry</div>
+            <div class="paste-inst-body">Add one row at a time using the button below. Fill in date, track, time and temperature for each reading.</div>
+          </div>
         </div>
 
-        <!-- Extracted / Manual Form -->
+        <!-- ── PARSED / EDITABLE ROWS TABLE (shared by both methods) ── -->
         <div class="entry-form" id="entryForm">
-          <div class="form-section-title">Extracted Data — Review & Edit</div>
+          <div class="form-section-title" id="rowsTitle">Readings — Review & Edit</div>
 
-          <!-- Dynamic rows table (one row per reading) -->
           <div id="dynamicRowsContainer" class="dynamic-rows">
-            <div class="no-rows-hint">No readings yet — upload an image or click "+ Add Row"</div>
+            <div class="no-rows-hint">No readings yet</div>
           </div>
 
           <button class="add-row-btn" id="addRowBtn">+ Add Row</button>
 
-          <!-- Weather fetch status -->
           <div class="weather-fetch-row" id="weatherFetchRow">
             <span class="weather-fetch-icon">🌡</span>
             <span class="weather-fetch-label" id="weatherFetchLabel">Weather data will be fetched automatically on save</span>
           </div>
 
           <div class="form-actions">
-            <button class="btn-secondary" id="clearFormBtn">Clear</button>
+            <button class="btn-secondary" id="clearFormBtn">Clear All</button>
             <button class="btn-primary" id="saveBtn">Save to Sheet</button>
           </div>
 
@@ -246,7 +255,6 @@
   <script src="js/config.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/api.js"></script>
-  <script src="js/ocr.js"></script>
   <script src="js/charts.js"></script>
   <script src="js/table.js"></script>
   <script src="js/upload.js"></script>
