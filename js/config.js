@@ -11,7 +11,7 @@ const CONFIG = {
    * After deploying your Apps Script, paste the URL here.
    * e.g. "https://script.google.com/macros/s/AKfyc.../exec"
    */
-  GAS_URL: "https://script.google.com/macros/s/180SRqBFFGHLjNi3gVvnShTNdxzT2A79GNo2mZncNT_s/exec",
+  GAS_URL: "https://script.google.com/macros/s/AKfycbwXogim40N_dcqiIDNxAdlgBbHFkZ64yQpvFkfWvwAcyVEw5f9FTrEpjBpL_qoU7qRu/exec",
 
   /**
    * Admin password hash (SHA-256 of the actual password).
