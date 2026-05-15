@@ -67,8 +67,9 @@ const API = (() => {
    */
   async function fetchHistoricalWeather(date, hour) {
     const w = CONFIG.WEATHER_API;
+    const base = w.ARCHIVE_BASE || w.BASE || "https://archive-api.open-meteo.com/v1";
     const url = [
-      `${w.BASE}/archive?`,
+      `${base}/archive?`,
       `latitude=${w.LAT}&longitude=${w.LON}`,
       `&start_date=${date}&end_date=${date}`,
       `&hourly=${w.HOURLY_PARAMS}`,
@@ -100,8 +101,9 @@ const API = (() => {
    */
   async function fetchCurrentWeather() {
     const w = CONFIG.WEATHER_API;
+    const base = w.FORECAST_BASE || w.BASE || "https://api.open-meteo.com/v1";
     const url = [
-      `${w.BASE}/forecast?`,
+      `${base}/forecast?`,
       `latitude=${w.LAT}&longitude=${w.LON}`,
       `&current=${w.CURRENT_PARAMS}`,
       `&timezone=${encodeURIComponent(w.TIMEZONE)}`,
@@ -126,7 +128,7 @@ const API = (() => {
    * @returns {Object} weather data object
    */
   async function fetchWeatherForDateTime(date, time) {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayISO();
     const hour  = parseInt(time?.split(":")[0] || "12", 10);
 
     if (date < today) {
@@ -136,6 +138,16 @@ const API = (() => {
       // Current / future via forecast API
       return await fetchCurrentWeather();
     }
+  }
+
+  /**
+   * Return today's date in local browser time as YYYY-MM-DD.
+   * Avoids UTC rollover causing today's IST uploads to be treated as yesterday.
+   */
+  function todayISO() {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().slice(0, 10);
   }
 
   // Expose public API
