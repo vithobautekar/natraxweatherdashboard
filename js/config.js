@@ -28,11 +28,16 @@ const CONFIG = {
    * Open-Meteo API for weather data (free, no API key required).
    * NATRAX, Pithampur coordinates.
    */
-  WEATHER_API: {
+WEATHER_API: {
     BASE:      "https://api.open-meteo.com/v1",
     LAT:       22.617,   // NATRAX, Pithampur latitude
     LON:       76.617,   // NATRAX, Pithampur longitude
     TIMEZONE:  "Asia/Kolkata",
+    FORECAST_BASE: "https://api.open-meteo.com/v1",
+    ARCHIVE_BASE:  "https://archive-api.open-meteo.com/v1",
+    LAT:           22.617,   // NATRAX, Pithampur latitude
+    LON:           76.617,   // NATRAX, Pithampur longitude
+    TIMEZONE:      "Asia/Kolkata",
     CURRENT_PARAMS: "temperature_2m,relative_humidity_2m,wind_speed_10m",
     HOURLY_PARAMS:  "temperature_2m,relative_humidity_2m,wind_speed_10m",
   },
