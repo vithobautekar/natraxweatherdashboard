@@ -183,7 +183,12 @@ const Upload = (() => {
       rowEl.querySelectorAll("[data-field]").forEach(function(input) {
         input.addEventListener("input", function(e) {
           const row = _rows.find(function(r) { return r.id === id; });
-          if (row) row[e.target.dataset.field] = e.target.value;
+          if (!row) return;
+          const field = e.target.dataset.field;
+          let val = e.target.value;
+          if (field === "time") val = to24h(val);
+          if (field === "date") val = toISODate(val);
+          row[field] = val;
         });
       });
     });
@@ -195,6 +200,51 @@ const Upload = (() => {
         rebuildTable();
       });
     });
+  }
+
+  // ── Format helpers ────────────────────────────────────
+
+  /**
+   * Convert any time string to HH:MM 24-hour format.
+   * Handles: "13:45", "1:45 PM", "01:43 PM", "09:21 AM"
+   */
+  function to24h(timeStr) {
+    if (!timeStr) return "";
+    timeStr = timeStr.trim();
+
+    // Already HH:MM with no AM/PM — return as-is (zero-pad hour)
+    const plain = timeStr.match(/^(\d{1,2}):(\d{2})$/);
+    if (plain) return plain[1].padStart(2,"0") + ":" + plain[2];
+
+    // HH:MM AM/PM
+    const ampm = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (ampm) {
+      let h = parseInt(ampm[1], 10);
+      const m = ampm[2];
+      const period = ampm[3].toUpperCase();
+      if (period === "AM" && h === 12) h = 0;
+      if (period === "PM" && h !== 12) h += 12;
+      return String(h).padStart(2,"0") + ":" + m;
+    }
+
+    // Fallback — return whatever was given
+    return timeStr;
+  }
+
+  /**
+   * Convert date from MM/DD/YYYY (browser default on Windows)
+   * or DD/MM/YYYY to YYYY-MM-DD for consistent storage.
+   * The input[type=date] always returns YYYY-MM-DD internally —
+   * this handles cases where .value comes back in locale format.
+   */
+  function toISODate(dateStr) {
+    if (!dateStr) return "";
+    // Already YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+    // DD/MM/YYYY or MM/DD/YYYY — parse as DD/MM/YYYY (NATRAX convention)
+    const m = dateStr.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+    if (m) return m[3] + "-" + m[2].padStart(2,"0") + "-" + m[1].padStart(2,"0");
+    return dateStr;
   }
 
   // ── Clear ─────────────────────────────────────────────
@@ -218,9 +268,9 @@ const Upload = (() => {
         const id  = parseInt(rowEl.dataset.id);
         const row = _rows.find(function(r) { return r.id === id; });
         if (!row) return;
-        row.date  = rowEl.querySelector(".row-date")?.value  || "";
+        row.date  = toISODate(rowEl.querySelector(".row-date")?.value  || "");
         row.track = rowEl.querySelector(".row-track")?.value || "";
-        row.time  = rowEl.querySelector(".row-time")?.value  || "";
+        row.time  = to24h(rowEl.querySelector(".row-time")?.value  || "");
         row.temp  = rowEl.querySelector(".row-temp")?.value  || "";
       });
 
