@@ -13,7 +13,7 @@ const App = (() => {
 
   let _records    = [];          // All loaded records
   let _trackFilter  = "all";
-  let _periodFilter = 7;         // Days back
+  let _periodFilter = 90;         // Days back
   let _toastTimer   = null;
 
   // ── Toast notification ────────────────────────────────
