@@ -25,17 +25,32 @@ const API = (() => {
 
   /**
    * Save one or more rows to Google Sheet.
+   * Apps Script Web Apps require following redirects and
+   * sending as text/plain to avoid CORS preflight failures.
    * @param {Object[]} rows - Array of row objects to append
    * @param {string} adminToken - Hashed password for auth
    */
   async function saveRows(rows, adminToken) {
+    const payload = JSON.stringify({ action: "saveRows", token: adminToken, rows });
+
+    // Apps Script rejects application/json from cross-origin due to preflight.
+    // Sending as text/plain avoids the preflight and GAS parses it fine.
     const res = await fetch(CONFIG.GAS_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "saveRows", token: adminToken, rows }),
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain" },
+      body: payload,
     });
-    if (!res.ok) throw new Error(`Save failed: ${res.status}`);
-    const json = await res.json();
+
+    if (!res.ok) throw new Error(`Save failed: HTTP ${res.status}`);
+
+    let json;
+    try {
+      json = await res.json();
+    } catch (e) {
+      throw new Error("Server returned invalid response — check Apps Script deployment");
+    }
+
     if (json.error) throw new Error(json.error);
     return json;
   }
